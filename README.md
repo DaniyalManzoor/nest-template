@@ -38,11 +38,17 @@ cd relayer-backend
 ### 2. Environment Configuration
 
 ```bash
-# Copy the example environment file
+# Copy the example environment file (optimized for Docker)
 cp env.example .env
 
-# Edit the .env file with your configuration
-# Default values work for Docker setup
+# The default env.example is configured for Docker Compose
+# It uses 'redis' as the Redis host (Docker service name)
+
+# For production, you may want to customize:
+# - APP_URL=https://your-domain.com
+# - HEALTH_CHECK_URL=https://your-domain.com/health
+# - REDIS_URL=redis://your-redis-host:6379
+# - REDIS_PASSWORD=your-secure-password
 ```
 
 ### 3. Run with Docker Compose
@@ -97,12 +103,13 @@ redis-server
 ### 3. Environment Setup
 
 ```bash
-# Copy environment file
-cp env.example .env
+# For local development, use the local environment template
+cp env.local.example .env
 
-# For local development, use these Redis settings:
-# REDIS_HOST=localhost
-# REDIS_PORT=6379
+# This sets REDIS_HOST=localhost for local Redis connection
+# If you prefer to use the Docker template:
+# cp env.example .env
+# Then change REDIS_HOST from 'redis' to 'localhost'
 ```
 
 ### 4. Run the Application
@@ -158,13 +165,22 @@ GET /          # Welcome message (default NestJS endpoint)
 
 ## Environment Variables
 
-| Variable         | Description             | Default       | Required |
-| ---------------- | ----------------------- | ------------- | -------- |
-| `NODE_ENV`       | Application environment | `development` | No       |
-| `PORT`           | Application port        | `3000`        | No       |
-| `REDIS_HOST`     | Redis server host       | `localhost`   | Yes      |
-| `REDIS_PORT`     | Redis server port       | `6379`        | No       |
-| `REDIS_PASSWORD` | Redis password          | -             | No       |
+| Variable           | Description               | Docker Default                 | Local Default                  | Required |
+| ------------------ | ------------------------- | ------------------------------ | ------------------------------ | -------- |
+| `NODE_ENV`         | Application environment   | `development`                  | `development`                  | No       |
+| `PORT`             | Application port          | `3000`                         | `3000`                         | No       |
+| `APP_URL`          | Application base URL      | `http://localhost:3000`        | `http://localhost:3000`        | No       |
+| `REDIS_HOST`       | Redis server host         | `redis` (service name)         | `localhost`                    | Yes      |
+| `REDIS_PORT`       | Redis server port         | `6379`                         | `6379`                         | No       |
+| `REDIS_PASSWORD`   | Redis password            | -                              | -                              | No       |
+| `REDIS_URL`        | Redis connection URL      | `redis://redis:6379`           | `redis://localhost:6379`       | No       |
+| `HEALTH_CHECK_URL` | Health check endpoint URL | `http://localhost:3000/health` | `http://localhost:3000/health` | No       |
+| `LOG_LEVEL`        | Application logging level | `info`                         | `info`                         | No       |
+
+### Environment File Templates
+
+- **`env.example`** - Optimized for Docker Compose (uses `redis` as host)
+- **`env.local.example`** - Optimized for local development (uses `localhost` as host)
 
 ## Docker Services
 
